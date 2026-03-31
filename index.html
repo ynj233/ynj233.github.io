@@ -145,6 +145,29 @@
             });
         }
     }
-    window.addEventListener('wheel',scrollHandler);
-</script>
+    // 触摸滑动事件（手机/平板）
+ let touchStartY = 0;
+ function touchStartHandler(event) {
+   touchStartY = event.touches[0].clientY;
+ }
+ function touchMoveHandler(event) {
+   const touchY = event.touches[0].clientY;
+   const deltaY = touchStartY - touchY; // 向上滑为正
+   if(deltaY > 0){
+     scrollDistance = Math.min(600, scrollDistance + deltaY);
+   } else {
+     scrollDistance = Math.max(0, scrollDistance + deltaY);
+   }
+   touchStartY = touchY;
+   if(!requestId) {
+     requestId = window.requestAnimationFrame(() => {
+       updateHeaderClipPath();
+       requestId = null;
+     });
+   }
+ }
+ window.addEventListener('wheel', scrollHandler);
+ window.addEventListener('touchstart', touchStartHandler);
+ window.addEventListener('touchmove', touchMoveHandler);
+ </script>
 </html>
